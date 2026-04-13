@@ -1,10 +1,10 @@
 services:
-  wryon_wireguard_server:
+  wryon_wg_server:
     build:
       context: .
-      dockerfile: ./docker/wireguard_server/Dockerfile
-    container_name: wryon_wireguard_server
-    image: wryon_wireguard_server
+      dockerfile: ./docker/wg_server/Dockerfile
+    container_name: wryon_wg_server
+    image: wryon_wg_server
     environment:
       - PUID=1000
       - PGID=1000
@@ -22,7 +22,7 @@ services:
       - CONFIG_PATH=/config
       - ALLOWEDIPS=10.13.13.0/24
     volumes:
-      - ./docker/wireguard_server/config:/config
+      - ./docker/wg_server/config:/config
       - /lib/modules:/lib/modules:ro
     ports:
       - 51820:51820/udp
@@ -37,49 +37,38 @@ services:
   wryon_bob:
     image: nginx:alpine
     container_name: wryon_bob
-    network_mode: "service:wryon_wireguard_server"
+    network_mode: "service:wryon_wg_server"
     depends_on:
-      - wryon_wireguard_server
+      - wryon_wg_server
 
-  wryon_wireguard_client:
+  wryon_wg_client:
     build:
       context: .
-      dockerfile: ./docker/wireguard_client/Dockerfile
-    container_name: wryon_wireguard_client
-    image: wryon_wireguard_client
+      dockerfile: ./docker/wg_client/Dockerfile
+    container_name: wryon_wg_client
+    image: wryon_wg_client
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=Etc/UTC
     depends_on:
-      - wryon_wireguard_server
+      - wryon_wg_server
     cap_add:
       - NET_ADMIN
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
     volumes:
-      - ./docker/wireguard_client/config:/config
+      - ./docker/wg_client/config:/config
     networks:
       - wryon
 
   wryon_alice:
     image: alpine
     container_name: wryon_alice
-    network_mode: "service:wryon_wireguard_client"
+    network_mode: "service:wryon_wg_client"
     depends_on:
-      - wryon_wireguard_client
+      - wryon_wg_client
     command: /bin/sh -c "apk add curl && sleep infinity"
-
-  # wryon_cnc:
-  #   build:
-  #     context: .
-  #     dockerfile: ./docker/cnc/Dockerfile
-  #   container_name: wryon_cnc
-  #   depends_on:
-  #     - wryon_wireguard_client
-  #   network_mode: service:wryon_wireguard_client
-  #   image: wryon_cnc
-  #   restart: unless-stopped
 
 networks:
   wryon:

@@ -1,5 +1,5 @@
-docker/wireguard_server/config/*
-docker/wireguard_client/config/*
+docker/wg_server/config/*
+docker/wg_client/config/*
 
 *.local
 
