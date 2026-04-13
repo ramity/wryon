@@ -21,10 +21,13 @@ IP Forwarding is enabled on the wireguard server and the wireguard client.
 
 # Containers
 
+## Server
 - wryon_wireguard_server - Wireguard server
+- wryon_bob - Test nginx server
+
+## Client
 - wryon_wireguard_client - Wireguard client
 - wryon_alice - Test curl client
-- wryon_bob - Test nginx server
 
 Wryon_bob attaches to the wryon_wireguard_server container using network_mode: service:wryon_wireguard_server.
 Wryon_alice attaches to the wryon_wireguard_client container using network_mode: service:wryon_wireguard_client.
