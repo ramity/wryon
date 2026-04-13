@@ -1,0 +1,6 @@
+docker/wireguard_server/config/*
+docker/wireguard_client/config/*
+
+*.local
+
+!.gitkeep
