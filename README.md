@@ -25,3 +25,9 @@ IP Forwarding is enabled on the wireguard server and the wireguard client.
 - wryon_wireguard_client - Wireguard client
 - wryon_alice - Test curl client
 - wryon_bob - Test nginx server
+
+Wryon_bob attaches to the wryon_wireguard_server container using network_mode: service:wryon_wireguard_server.
+Wryon_alice attaches to the wryon_wireguard_client container using network_mode: service:wryon_wireguard_client.
+
+Wryon_wireguard_server is accessible via port 51820/udp on the host machine.
+Wryon_wireguard_client connects to wryon_wireguard_server via wireguard server port 51820/udp. 
