@@ -17,8 +17,6 @@ docker exec -t wryon_alice curl -I 10.13.13.1
 - 10.13.13.2 - Wireguard client
 - 10.13.13.3 - Wireguard client
 
-IP Forwarding is enabled on the wireguard server and the wireguard client.
-
 # Containers
 
 ## Server
