@@ -64,6 +64,14 @@ services:
       - wryon_wg_client_1
     command: /bin/sh -c "apk add curl && sleep infinity"
 
+  wryon_charlie:
+    image: alpine
+    container_name: wryon_charlie
+    network_mode: "service:wryon_wg_client_1"
+    depends_on:
+      - wryon_wg_client_1
+    command: /bin/sh -c "apk add openssh-client && sleep infinity"
+
   wryon_wg_client_2:
     build:
       context: .
@@ -91,6 +99,28 @@ services:
     network_mode: "service:wryon_wg_client_2"
     depends_on:
       - wryon_wg_client_2
+
+  wryon_ssh_server:
+    image: lscr.io/linuxserver/openssh-server:latest
+    container_name: wryon_ssh_server
+    network_mode: "service:wryon_wg_client_2"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      # - PUBLIC_KEY=yourpublickey #optional
+      # - PUBLIC_KEY_FILE=/path/to/file #optional
+      # - PUBLIC_KEY_DIR=/path/to/directory/containing/_only_/pubkeys #optional
+      - PUBLIC_KEY_URL=https://github.com/ramity.keys #optional
+      - SUDO_ACCESS=false #optional
+      - PASSWORD_ACCESS=false #optional
+      # - USER_PASSWORD=password #optional
+      # - USER_PASSWORD_FILE=/path/to/file #optional
+      - USER_NAME=ramity #optional
+      - LOG_STDOUT= #optional
+    volumes:
+      - ./docker/ssh_server/config:/config
+    restart: unless-stopped
 
 networks:
   wryon:

@@ -10,8 +10,10 @@ A proof of concept for a distributed system that can be used to run containers o
 | 10.13.13.1 | Wireguard server | `wryon_wg_server` |
 | 10.13.13.2 | Wireguard client 1 | `wryon_wg_client_1` |
 | 10.13.13.2 | Alice | `wryon_alice` |
+| 10.13.13.2 | SSH Client | `wryon_charlie` |
 | 10.13.13.3 | Wireguard client 2 | `wryon_wg_client_2` |
 | 10.13.13.3 | Bob | `wryon_bob` |
+| 10.13.13.3 | SSH Server | `wryon_ssh_server` |
 
 # Containers
 
@@ -21,7 +23,12 @@ A proof of concept for a distributed system that can be used to run containers o
 ## Client 1
 - `wryon_wg_client_1` - Wireguard client
 - `wryon_alice` - Test curl client - network_mode: service:wryon_wg_client_1
+- `wryon_charlie` - Test ssh client - network_mode: service:wryon_wg_client_1
 
 ## Client 2
 - `wryon_wg_client_2` - Wireguard client
 - `wryon_bob` - Test nginx server - network_mode: service:wryon_wg_client_2
+- `wryon_ssh_server` - Test ssh server - network_mode: service:wryon_wg_client_2
+
+## Testing
+- Exec into wryon_charlie and run: `ssh ramity@10.13.13.3 -p 2222 -vvv`
