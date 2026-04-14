@@ -18,28 +18,43 @@ A proof of concept for a distributed system that can be used to run containers o
 # Containers
 
 ## Server
+
 - `wryon_wg_server` - Wireguard server
 
 ## Client 1
+
 - `wryon_wg_client_1` - Wireguard client
 - `wryon_alice` - Test curl client
 - `wryon_charlie` - Test ssh client
 
 ## Client 2
+
 - `wryon_wg_client_2` - Wireguard client
 - `wryon_bob` - Test nginx server
 - `wryon_ssh_server` - Test ssh server
 
 ## Testing
 
-- Exec into wryon_alice and run curl bob's nginx server
+- Exec into wryon_alice and ping server
+
+```bash
+docker exec wryon_alice ping -c 4 10.13.13.1
+```
+
+- Exec into wryon_bob and ping server
+
+```bash
+docker exec wryon_bob ping -c 4 10.13.13.1
+```
+
+- Exec into wryon_alice and curl wryon_bob's nginx server
+
 ```bash
 docker exec wryon_alice curl 10.13.13.3
 ```
 
-- Exec into wryon_charlie and run ssh to wryon_ssh_server
+- Exec into wryon_charlie and ssh into wryon_ssh_server
+
 ```bash
 docker exec wryon_charlie ssh ramity@10.13.13.3 -p 2222 -vvv
 ```
-
-- scripts/test.sh was used when pinging was required to refresh the UDP connection that would otherwise time out. The use of a KeepAlive setting has since been implemented.
