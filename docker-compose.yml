@@ -18,6 +18,7 @@ services:
       # - INTERNAL_SUBNET=10.13.13.0
       # Number of client configs to generate (or a list of names)
       - PEERS=2
+      - PERSISTENTKEEPALIVE_PEERS=all
       - PEERDNS=auto
       - CONFIG_PATH=/config
       - ALLOWEDIPS=10.13.13.0/24
@@ -34,19 +35,12 @@ services:
     networks:
       - wryon
 
-  wryon_bob:
-    image: nginx:alpine
-    container_name: wryon_bob
-    network_mode: "service:wryon_wg_server"
-    depends_on:
-      - wryon_wg_server
-
-  wryon_wg_client:
+  wryon_wg_client_1:
     build:
       context: .
-      dockerfile: ./docker/wg_client/Dockerfile
-    container_name: wryon_wg_client
-    image: wryon_wg_client
+      dockerfile: ./docker/wg_client_1/Dockerfile
+    container_name: wryon_wg_client_1
+    image: wryon_wg_client_1
     environment:
       - PUID=1000
       - PGID=1000
@@ -58,17 +52,45 @@ services:
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
     volumes:
-      - ./docker/wg_client/config:/config
+      - ./docker/wg_client_1/config:/config
     networks:
       - wryon
 
   wryon_alice:
     image: alpine
     container_name: wryon_alice
-    network_mode: "service:wryon_wg_client"
+    network_mode: "service:wryon_wg_client_1"
     depends_on:
-      - wryon_wg_client
+      - wryon_wg_client_1
     command: /bin/sh -c "apk add curl && sleep infinity"
+
+  wryon_wg_client_2:
+    build:
+      context: .
+      dockerfile: ./docker/wg_client_2/Dockerfile
+    container_name: wryon_wg_client_2
+    image: wryon_wg_client_2
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    depends_on:
+      - wryon_wg_server
+    cap_add:
+      - NET_ADMIN
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    volumes:
+      - ./docker/wg_client_2/config:/config
+    networks:
+      - wryon
+
+  wryon_bob:
+    image: nginx:alpine
+    container_name: wryon_bob
+    network_mode: "service:wryon_wg_client_2"
+    depends_on:
+      - wryon_wg_client_2
 
 networks:
   wryon:

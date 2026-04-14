@@ -1,5 +1,6 @@
 docker/wg_server/config/*
-docker/wg_client/config/*
+docker/wg_client_1/config/*
+docker/wg_client_2/config/*
 
 *.local
 
