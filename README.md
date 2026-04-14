@@ -35,25 +35,25 @@ A proof of concept for a distributed system that can be used to run containers o
 
 ## Testing
 
-- Exec into wryon_alice and ping server
+Exec into wryon_alice and ping server
 
 ```bash
 docker exec wryon_alice ping -c 4 10.13.13.1
 ```
 
-- Exec into wryon_bob and ping server
+Exec into wryon_bob and ping server
 
 ```bash
 docker exec wryon_bob ping -c 4 10.13.13.1
 ```
 
-- Exec into wryon_alice and curl wryon_bob's nginx server
+Exec into wryon_alice and curl wryon_bob's nginx server
 
 ```bash
 docker exec wryon_alice curl 10.13.13.3
 ```
 
-- Exec into wryon_charlie and ssh into wryon_ssh_server
+Exec into wryon_charlie and ssh into wryon_ssh_server
 
 ```bash
 docker exec wryon_charlie ssh ramity@10.13.13.3 -p 2222 -vvv
