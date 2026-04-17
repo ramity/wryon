@@ -38,4 +38,5 @@ services:
 
 networks:
   wryon:
+    name: wryon
     driver: bridge
