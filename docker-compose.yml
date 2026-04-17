@@ -1,125 +1,39 @@
 services:
-  wryon_wg_server:
+  wryon_wg_client:
     build:
       context: .
-      dockerfile: ./docker/wg_server/Dockerfile
-    container_name: wryon_wg_server
-    image: wryon_wg_server
+      dockerfile: ./docker/wg_client/Dockerfile
+    container_name: wryon_wg_client
+    image: wryon_wg_client
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=Etc/UTC
-      # Development:
-      - SERVERURL=192.168.1.3
-      # - SERVERURL=wryon_wireguard_server
-      # Production:
-      # - SERVERURL=vpn.domain.com
-      - SERVERPORT=51820
-      # - INTERNAL_SUBNET=10.13.13.0
-      # Number of client configs to generate (or a list of names)
-      - PEERS=2
-      - PERSISTENTKEEPALIVE_PEERS=all
-      - PEERDNS=auto
-      - CONFIG_PATH=/config
-      - ALLOWEDIPS=10.13.13.0/24
-    volumes:
-      - ./docker/wg_server/config:/config
-      - /lib/modules:/lib/modules:ro
-    ports:
-      - 51820:51820/udp
     cap_add:
       - NET_ADMIN
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
+    volumes:
+      - ./docker/wg_client/config:/config
+    networks:
+      - wryon
     restart: unless-stopped
-    networks:
-      - wryon
-
-  wryon_wg_client_1:
-    build:
-      context: .
-      dockerfile: ./docker/wg_client_1/Dockerfile
-    container_name: wryon_wg_client_1
-    image: wryon_wg_client_1
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Etc/UTC
-    depends_on:
-      - wryon_wg_server
-    cap_add:
-      - NET_ADMIN
-    sysctls:
-      - net.ipv4.conf.all.src_valid_mark=1
-    volumes:
-      - ./docker/wg_client_1/config:/config
-    networks:
-      - wryon
-
-  wryon_alice:
-    image: alpine
-    container_name: wryon_alice
-    network_mode: "service:wryon_wg_client_1"
-    depends_on:
-      - wryon_wg_client_1
-    command: /bin/sh -c "apk add curl && sleep infinity"
-
-  wryon_charlie:
-    image: alpine
-    container_name: wryon_charlie
-    network_mode: "service:wryon_wg_client_1"
-    depends_on:
-      - wryon_wg_client_1
-    command: /bin/sh -c "apk add openssh-client && sleep infinity"
-
-  wryon_wg_client_2:
-    build:
-      context: .
-      dockerfile: ./docker/wg_client_2/Dockerfile
-    container_name: wryon_wg_client_2
-    image: wryon_wg_client_2
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Etc/UTC
-    depends_on:
-      - wryon_wg_server
-    cap_add:
-      - NET_ADMIN
-    sysctls:
-      - net.ipv4.conf.all.src_valid_mark=1
-    volumes:
-      - ./docker/wg_client_2/config:/config
-    networks:
-      - wryon
-
-  wryon_bob:
-    image: nginx:alpine
-    container_name: wryon_bob
-    network_mode: "service:wryon_wg_client_2"
-    depends_on:
-      - wryon_wg_client_2
 
   wryon_ssh_server:
     image: lscr.io/linuxserver/openssh-server:latest
     container_name: wryon_ssh_server
-    network_mode: "service:wryon_wg_client_2"
+    network_mode: "service:wryon_wg_client"
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=Etc/UTC
-      # - PUBLIC_KEY=yourpublickey #optional
-      # - PUBLIC_KEY_FILE=/path/to/file #optional
-      # - PUBLIC_KEY_DIR=/path/to/directory/containing/_only_/pubkeys #optional
-      - PUBLIC_KEY_URL=https://github.com/ramity.keys #optional
-      - SUDO_ACCESS=false #optional
-      - PASSWORD_ACCESS=false #optional
-      # - USER_PASSWORD=password #optional
-      # - USER_PASSWORD_FILE=/path/to/file #optional
-      - USER_NAME=ramity #optional
-      - LOG_STDOUT= #optional
+      - PUBLIC_KEY_URL=https://github.com/ramity.keys
+      - SUDO_ACCESS=false
+      - PASSWORD_ACCESS=false
+      - USER_NAME=ramity
     volumes:
       - ./docker/ssh_server/config:/config
+      - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
 
 networks:
