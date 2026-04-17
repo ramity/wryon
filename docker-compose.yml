@@ -27,7 +27,7 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Etc/UTC
-      - PUBLIC_KEY=ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOKzI211EV0uPFyCqFz/OA4V4QLUYJPp8ufO4yHvnodC # phone-1 termux
+      - PUBLIC_KEY=ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKcOND4BW/RdZ4jyymcitNoVhUfZJGJB8d2Z+G/MXZCR # phone-1 termux
       - PUBLIC_KEY_URL=https://github.com/ramity.keys
       - SUDO_ACCESS=true
       - PASSWORD_ACCESS=false
